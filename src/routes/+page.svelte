@@ -250,9 +250,7 @@
     const container = document.getElementById("fireworks");
     fireworks = new Fireworks(container!, {});
 
-    if (userPreferences.enableFireworks) {
-      fireworks.launch(15);
-    }
+    userPreferences.enableFireworks ? fireworks.launch(15) : null;
   });
 
   onDestroy(() => {
@@ -362,12 +360,15 @@
         >
       </button>
     </div>
-  </div>
-  <div class="mx-auto my-16 pb-8 w-1/2 min-w-64 max-w-xl">
-    <TodoForm />
-    {#each $todos as todo}
-      <Todo {todo} oncomplete={() => fireworks.launch(10)} />
-    {/each}
+    <div class="mx-auto my-16 pb-8 w-full min-w-64 max-w-xl">
+      <TodoForm />
+      {#each $todos as todo}
+        <Todo
+          {todo}
+          oncomplete={() => (userPreferences.enableFireworks ? fireworks.launch(15) : null)}
+        />
+      {/each}
+    </div>
   </div>
 </main>
 
