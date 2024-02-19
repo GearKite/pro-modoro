@@ -1,0 +1,10 @@
+modules = ["svelte-kit-node-20:v1-20230724-46059dd"]
+run = "npm run start"
+
+[nix]
+channel = "stable-23_11"
+
+[deployment]
+deploymentTarget = "static"
+publicDir = "build"
+run = ["sh", "-c", "npm run start"]
