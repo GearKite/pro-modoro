@@ -30,8 +30,7 @@
   let currentShortBreakCount = 0;
   let currentTimerOriginalLenght: number;
 
-  let isTimerRunning = false;
-  let isTimerPaused = false;
+  let timerState: "reset" | "running" | "paused" = "reset";
 
   let statistics: Statistics;
 
@@ -49,7 +48,7 @@
   }
 
   function switch_next_segment(start: boolean = false) {
-    if (isTimerRunning) {
+    if (timerState === "running") {
       // add current segment to statistics
       addStatisticsCycle();
     }
@@ -88,14 +87,13 @@
 
   function reset_timer() {
     currentTimerEndTime = Date.now() / 1000 + userPreferences[currentSegment.id] * 60;
-    isTimerPaused = false;
-    isTimerRunning = false;
+    timerState = "reset";
     display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
   }
 
   function start_timer() {
     reset_timer();
-    isTimerRunning = true;
+    timerState = "running";
 
     currentTimerStartTime = Date.now() / 1000;
     currentTimerOriginalLenght = userPreferences[currentSegment.id];
@@ -105,20 +103,18 @@
 
   function pause_timer() {
     currentTimerPauseRemainingTime = currentTimerEndTime - Date.now() / 1000;
-    isTimerRunning = false;
-    isTimerPaused = true;
+    timerState = "paused";
   }
 
   function resume_timer() {
     currentTimerEndTime = Date.now() / 1000 + currentTimerPauseRemainingTime;
-    isTimerRunning = true;
-    isTimerPaused = false;
+    timerState = "running";
     continuous_timer_updates();
   }
   function onBtnPlayPause() {
-    if (isTimerPaused) {
+    if (timerState === "paused") {
       resume_timer();
-    } else if (isTimerRunning) {
+    } else if (timerState === "running") {
       pause_timer();
     } else {
       start_timer();
@@ -129,7 +125,7 @@
     let time_left = currentTimerEndTime! - Date.now() / 1000;
 
     // check if timer is started
-    if (!isTimerRunning) {
+    if (!(timerState === "running")) {
       return;
     }
 
@@ -187,7 +183,7 @@
       return;
     }
     // update displayed time if the changed segment is selected
-    if (!isTimerRunning && !isTimerPaused && ref == currentSegment.id) {
+    if (timerState === "reset" && ref == currentSegment.id) {
       display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
     }
     // if this is the audio volume, update player
@@ -343,8 +339,8 @@
         <span
           class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
         >
-          <PlayIcon class={(!isTimerRunning && !isTimerPaused) || isTimerPaused ? "" : "hidden"} />
-          <PauseIcon class={isTimerRunning ? "" : "hidden"} />
+          <PlayIcon class={timerState !== "running" ? "" : "hidden"} />
+          <PauseIcon class={timerState === "running" ? "" : "hidden"} />
         </span>
       </button>
       <button
