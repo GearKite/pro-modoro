@@ -42,38 +42,38 @@
   // set the default displayed time on page load
   let display_time = "--:--";
 
-  function set_segment(segment: (typeof pomodoroSegments)[0]) {
+  function setSegment(segment: (typeof pomodoroSegments)[0]) {
     currentSegment = segment;
-    reset_timer();
+    resetTimer();
   }
 
-  function switch_next_segment(start: boolean = false) {
+  function switch_nextSegment(start: boolean = false) {
     if (timerState === "running") {
       // add current segment to statistics
       addStatisticsCycle();
     }
-    let next_segment;
+    let nextSegment;
     if (currentSegment === pomodoroSegments[0]) {
       // pomodoro
       if (currentShortBreakCount + 1 < userPreferences.cyclesBeforeLongBreak) {
         // -> isā pauze
-        next_segment = pomodoroSegments[1];
+        nextSegment = pomodoroSegments[1];
       } else {
         // -> garā pauze
-        next_segment = pomodoroSegments[2];
+        nextSegment = pomodoroSegments[2];
       }
     } else {
       currentShortBreakCount++;
       if (currentSegment === pomodoroSegments[1]) {
         // īsā pauze -> pomodoro
-        next_segment = pomodoroSegments[0];
+        nextSegment = pomodoroSegments[0];
       } else {
         // garā pauze -> pomodoro
-        next_segment = pomodoroSegments[0];
+        nextSegment = pomodoroSegments[0];
         currentShortBreakCount = 0;
       }
     }
-    set_segment(next_segment);
+    setSegment(nextSegment);
 
     // automatically start next segment
     if (
@@ -81,48 +81,48 @@
       ((currentSegment === pomodoroSegments[0] && userPreferences.autoStartPomodoro) ||
         (currentSegment !== pomodoroSegments[0] && userPreferences.autoStartBreaks))
     ) {
-      start_timer();
+      startTimer();
     }
   }
 
-  function reset_timer() {
+  function resetTimer() {
     currentTimerEndTime = Date.now() / 1000 + userPreferences[currentSegment.id] * 60;
     timerState = "reset";
     display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
   }
 
-  function start_timer() {
-    reset_timer();
+  function startTimer() {
+    resetTimer();
     timerState = "running";
 
     currentTimerStartTime = Date.now() / 1000;
     currentTimerOriginalLenght = userPreferences[currentSegment.id];
 
-    continuous_timer_updates();
+    continuousTimerUpdates();
   }
 
-  function pause_timer() {
+  function pauseTimer() {
     currentTimerPauseRemainingTime = currentTimerEndTime - Date.now() / 1000;
     timerState = "paused";
   }
 
-  function resume_timer() {
+  function resumeTimer() {
     currentTimerEndTime = Date.now() / 1000 + currentTimerPauseRemainingTime;
     timerState = "running";
-    continuous_timer_updates();
+    continuousTimerUpdates();
   }
   function onBtnPlayPause() {
     if (timerState === "paused") {
-      resume_timer();
+      resumeTimer();
     } else if (timerState === "running") {
-      pause_timer();
+      pauseTimer();
     } else {
-      start_timer();
+      startTimer();
     }
   }
 
-  function continuous_timer_updates() {
-    let time_left = currentTimerEndTime! - Date.now() / 1000;
+  function continuousTimerUpdates() {
+    let timeLeft = currentTimerEndTime! - Date.now() / 1000;
 
     // check if timer is started
     if (!(timerState === "running")) {
@@ -130,17 +130,17 @@
     }
 
     // wait for the amount of time until the next second, or at least 500ms
-    let wait_time = Math.max((time_left % 1) * 1000 + 100, 500);
+    let wait_time = Math.max((timeLeft % 1) * 1000 + 100, 500);
 
     // update display
-    display_time = secondsToDisplayTime(time_left);
+    display_time = secondsToDisplayTime(timeLeft);
 
     // check if timer finished, wait extra second at the end before switching segments
-    if (time_left < 1) {
-      pause_timer();
+    if (timeLeft < 1) {
+      pauseTimer();
       showTimerFinished();
       if (userPreferences.autoSwitchSegment) {
-        setTimeout(switch_next_segment, 1000, true);
+        setTimeout(switch_nextSegment, 1000, true);
       }
       if (currentSegment === pomodoroSegments[0]) {
         playSoundEffect(userPreferences.pomodoroSoundEffect);
@@ -152,7 +152,7 @@
 
       return;
     }
-    setTimeout(continuous_timer_updates, wait_time);
+    setTimeout(continuousTimerUpdates, wait_time);
   }
 
   function savePreferences() {
@@ -242,7 +242,7 @@
   }
 
   onMount(() => {
-    set_segment(currentSegment);
+    setSegment(currentSegment);
 
     const container = document.getElementById("fireworks");
     fireworks = new Fireworks(container!, {});
@@ -250,7 +250,7 @@
 
   onDestroy(() => {
     // stop timer on hmr
-    reset_timer();
+    resetTimer();
   });
 
   let settingsModalOpen = false;
@@ -307,7 +307,7 @@
                     {segment === currentSegment ? 'active' : ''}
                     {index === 0 ? 'rounded-s-lg' : ''}
                     {index === pomodoroSegments.length - 1 ? 'rounded-e-lg' : ''}"
-          on:click={() => set_segment(segment)}
+          on:click={() => setSegment(segment)}
         >
           {segment.name}
         </button>
@@ -346,7 +346,7 @@
       <button
         id="btn-skip"
         class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
-        on:click={() => switch_next_segment()}
+        on:click={() => switch_nextSegment()}
       >
         <span
           class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
