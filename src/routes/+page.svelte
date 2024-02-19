@@ -22,6 +22,9 @@
   } from ".";
   import { onDestroy, onMount } from "svelte";
   import { Fireworks } from "fireworks-js";
+  import TodoForm from "$lib/Todo/TodoForm.svelte";
+  import Todo from "$lib/Todo/Todo.svelte";
+  import { todos } from "$lib/Todo/TodoStore.js";
 
   let currentSegment = pomodoroSegments[0];
   let currentTimerEndTime: number;
@@ -289,7 +292,7 @@
   <div class="ps-4 text-sm font-normal">Cikls beidzies!</div>
 </div>
 
-<main class="grid h-screen place-items-center pt-20 pb-20">
+<main class="grid h-screen place-items-center pt-20 pb-20 grid-cols-1">
   <div>
     <h1 class="text-3xl font-bold">Pro-modoro</h1>
     <!-- Timer -->
@@ -355,6 +358,12 @@
         >
       </button>
     </div>
+  </div>
+  <div class="mx-auto my-16 pb-8 w-1/2 min-w-64 max-w-xl">
+    <TodoForm />
+    {#each $todos as todo}
+      <Todo {todo} />
+    {/each}
   </div>
 </main>
 
