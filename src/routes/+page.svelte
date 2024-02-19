@@ -173,18 +173,8 @@
     pipCanvas = document.createElement("canvas");
     pipCanvas.width = pipCanvas.height = 400;
     pipCtx = pipCanvas.getContext("2d")!;
-    pipVideo = document.querySelector("video")!;
-    pipVideo.srcObject = pipCanvas.captureStream();
-    pipVideo.autoplay = false;
-    pipVideo.controls = true;
-    pipVideo.addEventListener("play", () => {
-      timerState !== "running" ? onBtnPlayPause() : null;
-    });
-    pipVideo.addEventListener("pause", () => {
-      timerState === "running" ? onBtnPlayPause() : null;
-    });
 
-    pipVideo.classList.remove("hidden");
+    pipVideo.srcObject = pipCanvas.captureStream();
 
     pipActive = true;
     updatePiP();
@@ -431,7 +421,21 @@
       {/each}
     </div>
     <!-- PiP video -->
-    <video controls class="hidden m-4 w-48"></video>
+    <div class="{pipActive ? 'inline-flex' : 'hidden'} items-center">
+      <p><i>Picture in Picture</i> taimeris</p>
+      <!-- svelte-ignore a11y-media-has-caption -->
+      <video
+        controls
+        class="m-4 w-48 outline outline-slate-900 rounded-md"
+        bind:this={pipVideo}
+        on:play={() => {
+          timerState !== "running" ? onBtnPlayPause() : null;
+        }}
+        on:pause={() => {
+          timerState === "running" ? onBtnPlayPause() : null;
+        }}
+      ></video>
+    </div>
   </div>
 </main>
 
