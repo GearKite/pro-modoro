@@ -187,7 +187,7 @@
       return;
     }
     // update displayed time if the changed segment is selected
-    if (!isTimerRunning && ref == currentSegment.id) {
+    if (!isTimerRunning && !isTimerPaused && ref == currentSegment.id) {
       display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
     }
     // if this is the audio volume, update player
