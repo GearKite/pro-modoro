@@ -184,8 +184,6 @@
       timerState === "running" ? onBtnPlayPause() : null;
     });
 
-    document.body.appendChild(pipVideo);
-
     pipVideo.classList.remove("hidden");
 
     pipActive = true;
@@ -423,7 +421,7 @@
       </button>
     </div>
     <!-- Task list -->
-    <div class="mx-auto my-16 pb-8 w-full min-w-64 max-w-xl">
+    <div class="mx-auto mt-10 w-full min-w-64 max-w-xl mb-4">
       <TodoForm />
       {#each $todos as todo}
         <Todo
@@ -432,6 +430,8 @@
         />
       {/each}
     </div>
+    <!-- PiP video -->
+    <video controls class="hidden m-4 w-48"></video>
   </div>
 </main>
 
@@ -562,10 +562,7 @@
 </Modal>
 
 <!-- Fireworks -->
-<div id="fireworks" class="absolute top-0 h-screen w-screen -z-10" />
-
-<!-- PiP video -->
-<video class="m-4 w-48" />
+<div id="fireworks" class="absolute top-0 h-full w-screen -z-10" />
 
 <style lang="postcss">
   .btn-segment.active {
