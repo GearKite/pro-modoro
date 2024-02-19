@@ -5,7 +5,7 @@
     // console.log('Submitting...');
     if (todo === "") {
       todo = "";
-      return alert("Please enter a todo as required!");
+      return;
     }
     addTodo(todo);
     todo = "";
