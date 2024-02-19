@@ -8,6 +8,7 @@
     PauseIcon,
     SkipForwardIcon,
     BellIcon,
+    AirplayIcon,
   } from "svelte-feather-icons";
   import ThemeSwitch from "$lib/ThemeSwitch/ThemeSwitch.svelte";
   import {
@@ -38,6 +39,11 @@
   let statistics: Statistics;
 
   let fireworks: Fireworks;
+
+  let pipCanvas: HTMLCanvasElement;
+  let pipCtx: CanvasRenderingContext2D;
+  let pipVideo: HTMLVideoElement;
+  let pipActive: boolean = false;
 
   // set user preferences to default values before loading from local storage
   let userPreferences = defaultPreferenceValues;
@@ -138,6 +144,8 @@
     // update display
     timerDisplay = secondsToDisplayTime(timeLeft);
 
+    updatePiP();
+
     // check if timer finished, wait extra second at the end before switching segments
     if (timeLeft < 1) {
       pauseTimer();
@@ -156,6 +164,56 @@
       return;
     }
     setTimeout(continuousTimerUpdates, wait_time);
+  }
+
+  function startPiP() {
+    if (pipActive) {
+      return;
+    }
+    pipCanvas = document.createElement("canvas");
+    pipCanvas.width = pipCanvas.height = 400;
+    pipCtx = pipCanvas.getContext("2d")!;
+    pipVideo = document.querySelector("video")!;
+    pipVideo.srcObject = pipCanvas.captureStream();
+    pipVideo.autoplay = false;
+    pipVideo.controls = true;
+    pipVideo.addEventListener("play", () => {
+      timerState !== "running" ? onBtnPlayPause() : null;
+    });
+    pipVideo.addEventListener("pause", () => {
+      timerState === "running" ? onBtnPlayPause() : null;
+    });
+
+    document.body.appendChild(pipVideo);
+
+    pipVideo.classList.remove("hidden");
+
+    pipActive = true;
+    updatePiP();
+  }
+
+  function updatePiP() {
+    if (!pipActive) return;
+
+    let bodyStyle = window.getComputedStyle(document.querySelector("body")!);
+
+    pipCtx.fillStyle = bodyStyle.backgroundColor;
+    pipCtx.fillRect(0, 0, 400, 400);
+
+    pipCtx.fillStyle = bodyStyle.color;
+    pipCtx.font = "bold 100px sans";
+    pipCtx.textAlign = "center";
+    pipCtx.fillText(timerDisplay, 200, 200, 280);
+
+    // Get current segment button
+    let currentSegmentBtn = document.querySelector(`#btn-${currentSegment.id}`)!;
+    let currentSegmentBtnStyle = window.getComputedStyle(currentSegmentBtn);
+
+    pipCtx.fillStyle = currentSegmentBtnStyle.backgroundColor;
+    pipCtx.font = "40px sans";
+    pipCtx.fillText(currentSegment.name, 200, 260, 280);
+
+    timerState === "running" ? pipVideo.play() : pipVideo.pause();
   }
 
   function savePreferences() {
@@ -281,6 +339,10 @@
     <SettingsIcon />
     <span class="ml-1">Iestatījumi</span>
   </button>
+  <button
+    class="inline-flex bg-slate-200 dark:bg-slate-900 p-2 rounded-md m-1 transition-colors hover:bg-gray-300 dark:hover:bg-gray-700"
+    on:click={startPiP}><AirplayIcon /></button
+  >
   <ThemeSwitch />
 </nav>
 
@@ -501,6 +563,9 @@
 
 <!-- Fireworks -->
 <div id="fireworks" class="absolute top-0 h-screen w-screen -z-10" />
+
+<!-- PiP video -->
+<video class="absolute top-0 left-0 m-4 w-48" />
 
 <style lang="postcss">
   .btn-segment.active {
