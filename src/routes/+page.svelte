@@ -266,7 +266,7 @@
   <title>Pro-modoro</title>
 </svelte:head>
 
-<nav class="absolute right-0 mt-4 mr-8 ml-8 inline-flex">
+<nav class="flex flex-wrap items-center justify-end m-4">
   <button
     class="inline-flex bg-slate-200 dark:bg-slate-900 p-2 rounded-md m-1 transition-colors hover:bg-gray-300 dark:hover:bg-gray-700"
     on:click={() => (statisticsModalOpen = true)}
@@ -294,7 +294,7 @@
   <div class="ps-4 text-sm font-normal">Cikls beidzies!</div>
 </div>
 
-<main class="grid h-screen place-items-center pt-20 pb-20 grid-cols-1">
+<main class="grid h-screen place-items-center pt-4 grid-cols-1 min-w-64">
   <div>
     <h1 class="text-3xl font-bold">Pro-modoro</h1>
     <!-- Timer -->
@@ -414,7 +414,7 @@
                   step={preference.step}
                   bind:value={userPreferences[preference.ref]}
                   on:change={() => validateNumberAndSave(preference.ref)}
-                  class="rounded-md bg-slate-200 dark:bg-slate-900 w-1/2"
+                  class="rounded-md bg-slate-200 dark:bg-slate-900 w-1/2 p-1"
                   pattern="[0-9]"
                 />
               {:else if preference.type === "number"}
