@@ -1,6 +1,6 @@
 <script lang="ts">
   import { browser } from "$app/environment";
-  import { Modal, Button, P } from "flowbite-svelte";
+  import { Modal, Button } from "flowbite-svelte";
   import {
     SettingsIcon,
     BarChart2Icon,
@@ -239,15 +239,17 @@
       statistics = new Statistics();
       saveStatistics();
     }
+
+    window.onresize = function (event) {
+      fireworks.updateSize();
+    };
   }
 
   onMount(() => {
     set_segment(currentSegment);
 
     const container = document.getElementById("fireworks");
-    fireworks = new Fireworks(container!, {
-      /* options */
-    });
+    fireworks = new Fireworks(container!, {});
   });
 
   onDestroy(() => {
@@ -483,7 +485,7 @@
   </div>
 </Modal>
 
-<div id="fireworks" class="absolute top-0 h-screen w-full -z-10" />
+<div id="fireworks" class="absolute top-0 h-screen w-screen -z-10" />
 
 <style lang="postcss">
   .btn-segment.active {
