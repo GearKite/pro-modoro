@@ -447,7 +447,7 @@
     {/each}
   </div>
   <div class="grid place-items-end">
-    <Button color="alternative" class="w-24 transition">Aizvērt</Button>
+    <Button color="blue" class="w-24 transition">Aizvērt</Button>
   </div>
 </Modal>
 
@@ -486,7 +486,7 @@
       }}
       >Nodzēst
     </Button>
-    <Button color="alternative" class="w-24 transition">Aizvērt</Button>
+    <Button color="blue" class="w-24 transition">Aizvērt</Button>
   </div>
 </Modal>
 
