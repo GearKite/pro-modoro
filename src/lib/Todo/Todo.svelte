@@ -3,6 +3,8 @@
   import { deleteTodo, completeTodo } from "./TodoStore.js";
   import { Trash2Icon } from "svelte-feather-icons";
   export let todo: TodoT;
+
+  export let oncomplete = () => {};
 </script>
 
 <li
@@ -12,7 +14,12 @@
     name="completed"
     type="checkbox"
     checked={todo.completed}
-    on:change={() => completeTodo(todo.id)}
+    on:change={() => {
+      completeTodo(todo.id);
+      if (todo.completed) {
+        oncomplete();
+      }
+    }}
     class="mr-2 form-checkbox h-5 w-5 rounded-md dark:bg-slate-600"
   />
   <span

@@ -249,6 +249,10 @@
 
     const container = document.getElementById("fireworks");
     fireworks = new Fireworks(container!, {});
+
+    if (userPreferences.enableFireworks) {
+      fireworks.launch(15);
+    }
   });
 
   onDestroy(() => {
@@ -362,7 +366,7 @@
   <div class="mx-auto my-16 pb-8 w-1/2 min-w-64 max-w-xl">
     <TodoForm />
     {#each $todos as todo}
-      <Todo {todo} />
+      <Todo {todo} oncomplete={() => fireworks.launch(10)} />
     {/each}
   </div>
 </main>
