@@ -42,6 +42,7 @@ export interface NumberPreference extends BasePreference {
     min: number;
     max: number;
     step: number;
+    range?: boolean;
 }
 
 export interface SoundEffect {
@@ -164,6 +165,16 @@ export const preferences: Array<PreferencesSection> = [
                 meta: "Pauzes skaņa",
                 options: soundEffects,
             },
+            {
+                ref: "audioVolume",
+                type: "number",
+                value: 50,
+                meta: "Skaļums",
+                min: 1,
+                max: 100,
+                step: 1,
+                range: true,
+            },
         ],
     },
 ];
@@ -189,6 +200,9 @@ export function playSoundEffect(name?: string, uri?: string) {
     audioPlayer.src = src;
     audioPlayer.currentTime = 0;
     audioPlayer.play();
+}
+export function setAudioPlayerVolume(volume: number){
+  audioPlayer.volume = volume / 100;
 }
 
 export function median(arr: Array<number>) {

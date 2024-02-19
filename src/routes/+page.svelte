@@ -16,8 +16,9 @@
         pomodoroSegments,
         playSoundEffect,
         median,
+        Statistics,
+        setAudioPlayerVolume,
     } from ".";
-    import { Statistics } from ".";
     import { onDestroy, onMount } from "svelte";
 
     let currentSegment = pomodoroSegments[0];
@@ -196,6 +197,10 @@
         if (!isTimerRunning && ref == currentSegment.id) {
             display_time = seconds_to_display_time(userPreferences[currentSegment.id] * 60);
         }
+        // if this is the audio volume, update player
+        if (ref === "audioVolume") {
+            setAudioPlayerVolume(userPreferences.audioVolume);
+        }
         savePreferences();
     }
 
@@ -226,6 +231,7 @@
             console.debug("Preferences loaded", userPreferences);
         }
         display_time = seconds_to_display_time(userPreferences[currentSegment.id] * 60);
+        setAudioPlayerVolume(userPreferences.audioVolume);
 
         // load statistics
         const storedStatisticsStr = window.localStorage.getItem("statistics");
@@ -392,6 +398,19 @@
                                         class="absolute w-6 h-6 transition bg-white rounded-md dark:bg-dark-4 left-1 top-1 peer-checked:translate-x-full peer-checked:bg-primary"
                                     ></div>
                                 </div>
+                            {:else if preference.type === "number" && preference.range}
+                                <span>{userPreferences[preference.ref]}/{preference.max}</span>
+                                <input
+                                    type="range"
+                                    id="pref-{preference.ref}"
+                                    min={preference.min}
+                                    max={preference.max}
+                                    step={preference.step}
+                                    bind:value={userPreferences[preference.ref]}
+                                    on:change={() => validateNumberAndSave(preference.ref)}
+                                    class="rounded-md bg-slate-200 dark:bg-slate-900 w-1/2"
+                                    pattern="[0-9]"
+                                />
                             {:else if preference.type === "number"}
                                 <input
                                     type="number"
