@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-    "start": "vite dev --host 0.0.0.0",
+		"start": "vite dev --host 0.0.0.0",
 		"build": "vite build",
 		"deploy": "gh-pages -d build -t true",
 		"preview": "vite preview",
@@ -35,6 +35,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/adapter-static": "^3.0.1"
+		"@sveltejs/adapter-static": "^3.0.1",
+		"fireworks-js": "^2.10.7"
 	}
 }
