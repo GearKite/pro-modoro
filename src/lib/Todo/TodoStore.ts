@@ -4,6 +4,7 @@ import { browser } from "$app/environment";
 
 let initialValue: Array<TodoT> = [];
 
+// load stored todo list
 if (browser) {
   const todoStr = window.localStorage.getItem("todos");
   if (typeof todoStr === "string") {
@@ -40,6 +41,7 @@ export const completeTodo = (id: TodoT["id"]) => {
   });
 };
 
+// save todo list on change
 todos.subscribe((todos) => {
   if (browser) {
     const todoStr = JSON.stringify(todos);

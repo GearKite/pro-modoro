@@ -43,14 +43,14 @@
   let userPreferences = defaultPreferenceValues;
 
   // set the default displayed time on page load
-  let display_time = "--:--";
+  let timerDisplay = "--:--";
 
   function setSegment(segment: (typeof pomodoroSegments)[0]) {
     currentSegment = segment;
     resetTimer();
   }
 
-  function switch_nextSegment(start: boolean = false) {
+  function switchNextSegment(start: boolean = false) {
     if (timerState === "running") {
       // add current segment to statistics
       addStatisticsCycle();
@@ -91,7 +91,7 @@
   function resetTimer() {
     currentTimerEndTime = Date.now() / 1000 + userPreferences[currentSegment.id] * 60;
     timerState = "reset";
-    display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
+    timerDisplay = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
   }
 
   function startTimer() {
@@ -136,14 +136,14 @@
     let wait_time = Math.max((timeLeft % 1) * 1000 + 100, 500);
 
     // update display
-    display_time = secondsToDisplayTime(timeLeft);
+    timerDisplay = secondsToDisplayTime(timeLeft);
 
     // check if timer finished, wait extra second at the end before switching segments
     if (timeLeft < 1) {
       pauseTimer();
       showTimerFinished();
       if (userPreferences.autoSwitchSegment) {
-        setTimeout(switch_nextSegment, 1000, true);
+        setTimeout(switchNextSegment, 1000, true);
       }
       if (currentSegment === pomodoroSegments[0]) {
         playSoundEffect(userPreferences.pomodoroSoundEffect);
@@ -187,7 +187,7 @@
     }
     // update displayed time if the changed segment is selected
     if (timerState === "reset" && ref == currentSegment.id) {
-      display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
+      timerDisplay = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
     }
     // if this is the audio volume, update player
     if (ref === "audioVolume") {
@@ -226,7 +226,7 @@
       userPreferences = { ...defaultPreferenceValues, ...storedPreferences };
       console.debug("Preferences loaded", userPreferences);
     }
-    display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
+    timerDisplay = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
     setAudioPlayerVolume(userPreferences.audioVolume);
 
     // load statistics
@@ -299,7 +299,7 @@
     <h1 class="text-3xl font-bold">Pro-modoro</h1>
     <!-- Timer -->
     <h1 id="timer" class="text-8xl font-bold mt-8">
-      {display_time}
+      {timerDisplay}
     </h1>
 
     <!-- Segment buttons -->
@@ -351,7 +351,7 @@
       <button
         id="btn-skip"
         class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
-        on:click={() => switch_nextSegment()}
+        on:click={() => switchNextSegment()}
       >
         <span
           class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
@@ -360,6 +360,7 @@
         >
       </button>
     </div>
+    <!-- Task list -->
     <div class="mx-auto my-16 pb-8 w-full min-w-64 max-w-xl">
       <TodoForm />
       {#each $todos as todo}
@@ -375,6 +376,7 @@
 <!-- Settings modal -->
 <Modal title="Iestatījumi" bind:open={settingsModalOpen} size="xs" autoclose outsideclose>
   <div class="divide-y divide-solid">
+    <!-- Dynamically generate settings modal -->
     {#each preferences as section, i}
       <section class="ml-1 mr-1 items-start">
         <h3 class="text-xl text-slate-900 dark:text-white mb-4 {i > 0 ? 'mt-4' : ''}">
@@ -404,6 +406,7 @@
                     class="absolute w-6 h-6 transition bg-white rounded-md dark:bg-dark-4 left-1 top-1 peer-checked:translate-x-full peer-checked:bg-primary"
                   ></div>
                 </div>
+                <!-- TODO: DRY possibly? -->
               {:else if preference.type === "number" && preference.range}
                 <span>{userPreferences[preference.ref]}/{preference.max}</span>
                 <input
@@ -461,6 +464,7 @@
   <div class="grid place-items-start text-slate-900 dark:text-white">
     {#each pomodoroSegments as segment}
       <section class="ml-1 mr-1 items-start text-left mb-3">
+        <!-- TODO: graph -->
         <h4 class="text-md font-bold mb-1">{segment.name}</h4>
         <p>
           Izpildīts: {statistics.cycles.filter(function (el) {
@@ -495,6 +499,7 @@
   </div>
 </Modal>
 
+<!-- Fireworks -->
 <div id="fireworks" class="absolute top-0 h-screen w-screen -z-10" />
 
 <style lang="postcss">
