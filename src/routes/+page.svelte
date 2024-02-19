@@ -201,7 +201,7 @@
     statistics.cycles.push({
       type: currentSegment.id,
       startTime: currentTimerStartTime,
-      endTime: currentTimerEndTime,
+      endTime: Date.now() / 1000,
       originalLenght: currentTimerOriginalLenght,
     });
     saveStatistics();
