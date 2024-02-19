@@ -191,10 +191,33 @@ preferences.forEach((section) => {
     defaultPreferenceValues[preference.ref] = preference.value;
   });
 });
+
 let audioPlayer: HTMLAudioElement;
 if (browser) {
   audioPlayer = new Audio();
 }
+
+export function secondsToDisplayTime(time: number) {
+  // divide by 3600 to get the number of hours
+  const hours = Math.floor(time / 3600);
+
+  // calculate remaining minutes and seconds after removing hours
+  const remainingMinutes = Math.floor((time - hours * 3600) / 60);
+  const seconds = Math.floor(time - hours * 3600 - remainingMinutes * 60);
+
+  // check if hours are needed
+  if (hours > 0) {
+    // pad hours with a leading zero if necessary
+    const displayHours = String(hours).padStart(2, "0");
+
+    // add colon separator and format minutes and seconds as before
+    return `${displayHours}:${String(remainingMinutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  } else {
+    // if no hours, return minutes and seconds as before
+    return `${String(remainingMinutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+}
+
 export function playSoundEffect(name?: string, uri?: string) {
   console.debug("Playing sound effect", name, uri);
   // play from URI if given

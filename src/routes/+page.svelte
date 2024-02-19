@@ -18,6 +18,7 @@
     median,
     Statistics,
     setAudioPlayerVolume,
+    secondsToDisplayTime,
   } from ".";
   import { onDestroy, onMount } from "svelte";
   import { Fireworks } from "fireworks-js";
@@ -38,17 +39,6 @@
 
   // set user preferences to default values before loading from local storage
   let userPreferences = defaultPreferenceValues;
-
-  function seconds_to_display_time(time: number) {
-    let minutes = Math.floor(time / 60);
-
-    minutes = Math.max(minutes, 0);
-
-    let display_minutes = String(minutes).padStart(2, "0");
-    let display_seconds = String(Math.floor(time - minutes * 60)).padStart(2, "0");
-
-    return `${display_minutes}:${display_seconds}`;
-  }
 
   // set the default displayed time on page load
   let display_time = "--:--";
@@ -100,7 +90,7 @@
     currentTimerEndTime = Date.now() / 1000 + userPreferences[currentSegment.id] * 60;
     isTimerPaused = false;
     isTimerRunning = false;
-    display_time = seconds_to_display_time(userPreferences[currentSegment.id] * 60);
+    display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
   }
 
   function start_timer() {
@@ -147,7 +137,7 @@
     let wait_time = Math.max((time_left % 1) * 1000 + 100, 500);
 
     // update display
-    display_time = seconds_to_display_time(time_left);
+    display_time = secondsToDisplayTime(time_left);
 
     // check if timer finished, wait extra second at the end before switching segments
     if (time_left < 1) {
@@ -198,7 +188,7 @@
     }
     // update displayed time if the changed segment is selected
     if (!isTimerRunning && ref == currentSegment.id) {
-      display_time = seconds_to_display_time(userPreferences[currentSegment.id] * 60);
+      display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
     }
     // if this is the audio volume, update player
     if (ref === "audioVolume") {
@@ -237,7 +227,7 @@
       userPreferences = { ...defaultPreferenceValues, ...storedPreferences };
       console.debug("Preferences loaded", userPreferences);
     }
-    display_time = seconds_to_display_time(userPreferences[currentSegment.id] * 60);
+    display_time = secondsToDisplayTime(userPreferences[currentSegment.id] * 60);
     setAudioPlayerVolume(userPreferences.audioVolume);
 
     // load statistics
@@ -466,7 +456,7 @@
           }).length} reizes
         </p>
         <p>
-          Vidējais ilgums: {seconds_to_display_time(
+          Vidējais ilgums: {secondsToDisplayTime(
             median(
               statistics.cycles
                 .filter(function (el) {
