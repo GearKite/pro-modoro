@@ -1,3 +1,3 @@
 # pro-modoro
 
-A Pomodoro timer made in SvelteKit
+A Pomodoro timer made with SvelteKit
