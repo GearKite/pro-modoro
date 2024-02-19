@@ -565,7 +565,7 @@
 <div id="fireworks" class="absolute top-0 h-screen w-screen -z-10" />
 
 <!-- PiP video -->
-<video class="absolute top-0 left-0 m-4 w-48" />
+<video class="m-4 w-48" />
 
 <style lang="postcss">
   .btn-segment.active {
